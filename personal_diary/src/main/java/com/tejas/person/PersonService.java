@@ -1,4 +1,4 @@
-package com.tejas.user;
+package com.tejas.person;
 
 import java.util.ArrayList;
 import java.util.List;

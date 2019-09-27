@@ -1,4 +1,4 @@
-package com.tejas.user;
+package com.tejas.person;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;

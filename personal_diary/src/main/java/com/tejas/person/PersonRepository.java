@@ -1,4 +1,4 @@
-package com.tejas.user;
+package com.tejas.person;
 
 import org.springframework.data.repository.CrudRepository;
 
