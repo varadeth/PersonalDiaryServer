@@ -26,4 +26,9 @@ public class PersonController {
 		return personService.getPersons();
 	}
 	
+	@GetMapping("/deleteAll")
+	public void deletePersons() {
+		personService.deletePersons();
+	}
+	
 }

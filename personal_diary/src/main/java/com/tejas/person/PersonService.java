@@ -12,8 +12,16 @@ public class PersonService {
 	@Autowired
 	private PersonRepository personRepository;
 	
-	public void addPerson(Person person) {
-		personRepository.save(person);
+	public int addPerson(Person person) {
+		Person previousPerson = getPerson(person.getUsername());
+		if(previousPerson != null) {
+			return 409;
+		}
+		Person response = personRepository.save(person);
+		if(response != null) {
+			return 200;
+		}
+		return 500;
 	}
 	
 	public Person getPerson(String userName) {
@@ -44,4 +52,7 @@ public class PersonService {
 		return persons;
 	}
 	
+	public void deletePersons() {
+		personRepository.deleteAll();
+	}
 }
