@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,16 +16,9 @@ public class PersonController {
 	@Autowired
 	private PersonService personService;
 	
-	@GetMapping("/user/{userName}")
-	public Person getPerson(@PathVariable String userName) {
-		System.out.println(userName);
-		return personService.getPerson(userName);
-	}
-	
-	@PostMapping("/user")
-	public void addPerson(@RequestBody Person user) {
-		System.out.println(user);
-		personService.addPerson(user);
+	@PutMapping("/user/{username}")
+	public boolean updatePerson(@PathVariable String username,@RequestBody Person person) {
+		return personService.updatePerson(username, person);
 	}
 	
 	@GetMapping("/users") 

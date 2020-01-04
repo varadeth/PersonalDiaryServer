@@ -23,9 +23,9 @@ public class PersonService {
 		return person;
 	}
 	
-	public boolean updatePerson(Person updatedPerson) {
+	public boolean updatePerson(String username,Person updatedPerson) {
 		boolean isUpdated = false;
-		Person person = personRepository.findById(updatedPerson.getUsername()).orElseGet(()->{
+		Person person = personRepository.findById(username).orElseGet(()->{
 			return null;	
 		});
 		if(person != null ) {
