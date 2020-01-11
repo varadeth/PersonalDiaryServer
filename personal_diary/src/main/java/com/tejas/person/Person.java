@@ -1,7 +1,16 @@
 package com.tejas.person;
 
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+
+import com.tejas.diary.Diary;
 
 @Entity
 public class Person {
@@ -11,6 +20,10 @@ public class Person {
 	private String password;
 	private String contactNo;
 	private String email;
+	
+	@OneToMany(mappedBy = "usrname", fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL)
+	private List<Diary> diaryContent;
 	
 	public Person() {
 		// TODO Auto-generated constructor stub
