@@ -1,17 +1,37 @@
 package com.tejas.person;
 
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+
+import com.tejas.diary.Diary;
 
 @Entity
 public class Person {
 	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private int pid;
 	private String username;
 	private String name;
 	private String password;
 	private String contactNo;
 	private String email;
 	
+	
+	public int getId() {
+		return pid;
+	}
+
+	public void setId(int id) {
+		this.pid = id;
+	}
+
 	public Person() {
 		// TODO Auto-generated constructor stub
 	}
@@ -24,8 +44,16 @@ public class Person {
 		this.contactNo = contactNo;
 		this.email = email;
 	}
+	public Person(int id,String username, String name, String password, String contactNo, String email) {
+		super();
+		this.pid = id;
+		this.username = username;
+		this.name = name;
+		this.password = password;
+		this.contactNo = contactNo;
+		this.email = email;
+	}
 	
-
 	public String getUsername() {
 		return username;
 	}

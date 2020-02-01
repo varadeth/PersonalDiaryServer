@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
+import com.tejas.person.User;
 import org.bouncycastle.jcajce.provider.digest.SHA3;
 import org.bouncycastle.util.encoders.Hex;
 
@@ -21,8 +21,10 @@ public class SignUp {
 	private PersonService personService;
 	
 	@PostMapping("/signup")
-	public Map onSignup(@RequestBody Person person) {
+	public Map onSignup(@RequestBody User user) {
+		System.out.println(1);
 		SHA3.DigestSHA3 digestSHA3 = new SHA3.Digest512();
+		Person person = new Person(user.getUsername(),user.getName(),user.getPassword(),user.getContactNo(),user.getEmail());
 		byte[] digest = digestSHA3.digest(person.getPassword().getBytes());
 		person.setPassword(Hex.toHexString(digest));
 		int statusCode = personService.addPerson(person);
