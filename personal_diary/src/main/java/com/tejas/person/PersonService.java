@@ -25,9 +25,7 @@ public class PersonService {
 	}
 	
 	public Person getPerson(String userName) {
-		Person person = personRepository.findById(userName).orElseGet(()->{
-			return null;
-		});
+		Person person = personRepository.findByUsername(userName);
 		return person;
 	}
 	

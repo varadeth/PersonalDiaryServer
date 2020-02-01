@@ -51,8 +51,8 @@ public class DiaryController {
 			e.printStackTrace();
 		}
 	}
-	@PostMapping("/addContent/{username}")
-	public int addContent(@PathVariable String username,@RequestBody Content content) {
+	@PostMapping("/addContent/{id}")
+	public int addContent(@PathVariable int id,@RequestBody Content content) {
 		System.out.println(content);
 		SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
 		content.setDate(formatter.format(new Date()));
@@ -63,7 +63,7 @@ public class DiaryController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Diary diary = new Diary(username,text,content.getDate());
+		Diary diary = new Diary(id,text,content.getDate());
 		diaryService.addContent(diary);
 		return 200;
 	}
@@ -73,17 +73,17 @@ public class DiaryController {
 		List<Diary> list = diaryService.getAllPosts();
 		String content = "";
 		for(Diary d : list) {
-			content += d.getUsername() + " : " + d.getDiaryContent() + "\n";
+			content += d.getId() + " : " + d.getDiaryContent() + "\n";
 		}
 		return content;
 	}
 	
-	@GetMapping("/posts/{username}")
-	public List<Content> getAllPostsOfUser(@PathVariable String username) {
+	@GetMapping("/posts/{id}")
+	public List<Content> getAllPostsOfUser(@PathVariable int id) {
 		List<Diary> list = diaryService.getAllPosts();
 		ArrayList<Content> contentList = new ArrayList<Content>();
 		for(Diary d : list) {
-			if(d.getUsername().equals(username)) {
+			if(d.getId() == id) {
 				String encrypted = d.getDiaryContent().getText();
 				String decrypted="";
 				try {
