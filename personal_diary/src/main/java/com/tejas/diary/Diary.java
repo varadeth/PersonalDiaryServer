@@ -14,6 +14,9 @@ import com.tejas.person.Person;
 public class Diary {
 	
 	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private int did;
+	
 	private int id;
 	private String text;
 	private String date;

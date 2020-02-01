@@ -15,7 +15,7 @@ import com.tejas.diary.Diary;
 @Entity
 public class Person {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int pid;
 	private String username;
 	private String name;
@@ -23,6 +23,8 @@ public class Person {
 	private String contactNo;
 	private String email;
 	
+	@OneToMany(mappedBy="id",cascade=CascadeType.ALL,fetch = FetchType.LAZY)
+	private List<Diary>diaryContent;
 	
 	public int getId() {
 		return pid;
