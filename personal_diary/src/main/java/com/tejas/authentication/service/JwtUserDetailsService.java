@@ -1,4 +1,4 @@
-package com.tejas.javainuse.service;
+package com.tejas.authentication.service;
 
 import java.util.ArrayList;
 

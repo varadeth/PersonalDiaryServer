@@ -1,4 +1,4 @@
-package com.tejas.javainuse.config;
+package com.tejas.authentication.config;
 
 import java.io.IOException;
 
@@ -15,7 +15,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.tejas.javainuse.service.JwtUserDetailsService;
+import com.tejas.authentication.service.JwtUserDetailsService;
 
 import io.jsonwebtoken.ExpiredJwtException;
 

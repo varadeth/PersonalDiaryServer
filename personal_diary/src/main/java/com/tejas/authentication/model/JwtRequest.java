@@ -1,4 +1,4 @@
-package com.tejas.javainuse.model;
+package com.tejas.authentication.model;
 
 import java.io.Serializable;
 

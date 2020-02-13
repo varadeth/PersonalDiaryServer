@@ -1,4 +1,4 @@
-package com.tejas.javainuse.config;
+package com.tejas.authentication.config;
 import java.io.IOException;
 import java.io.Serializable;
 
