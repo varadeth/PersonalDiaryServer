@@ -51,5 +51,11 @@ public class JwtUserDetailsService implements UserDetailsService {
 		return person;
 	}
 	
+	public Person getPersonByLogin(String username, String password) {
+		Person person = null;
+		person = personRepository.findUserByUsernameAndPassword(username,password);
+		return person;
+	}
+	
 
 }
