@@ -16,15 +16,20 @@ public class DiaryService {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public void addContent(Diary content) {
+	public int addContent(Diary content) {
 		Diary d = diaryRepository.save(content);
-		System.out.println(d);
+		System.out.println(d.toString());
+		return d.getDid();
 	}
 	
 	public List<Diary> getAllPosts() {
 		List<Diary> posts = new ArrayList<Diary>();
 		diaryRepository.findAll().forEach(posts::add);
 		return posts;
+	}
+	
+	public List<Diary> getAllPostsForUserById(int id) {
+		return diaryRepository.findAllDiaryById(id);
 	}
 
 }

@@ -1,4 +1,4 @@
-package com.tejas.javainuse.controller;
+package com.tejas.authentication.controller;
 
 import java.util.HashMap;
 
@@ -6,6 +6,7 @@ import org.bouncycastle.jcajce.provider.digest.SHA3;
 import org.bouncycastle.util.encoders.Hex;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -17,11 +18,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.tejas.javainuse.config.JwtTokenUtil;
-import com.tejas.javainuse.model.JwtRequest;
-import com.tejas.javainuse.model.JwtResponse;
-import com.tejas.javainuse.service.JwtUserDetailsService;
+import com.tejas.authentication.config.JwtTokenUtil;
+import com.tejas.authentication.model.JwtRequest;
+import com.tejas.authentication.model.JwtResponse;
+import com.tejas.authentication.service.JwtUserDetailsService;
 import com.tejas.person.Person;
+import com.tejas.person.PersonService;
 
 @RestController
 @CrossOrigin
@@ -34,6 +36,9 @@ public class JwtAuthenticationController {
 	@Autowired
 	private JwtUserDetailsService userDetailsService;
 	
+	@Autowired
+	private PersonService personService;
+	
 	@PostMapping(value="/authenticate") 
 	public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
 		HashMap response = authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
@@ -42,10 +47,10 @@ public class JwtAuthenticationController {
 		if(status == 200) {
 			final UserDetails userDetails = userDetailsService
 					.loadUserByUsername(authenticationRequest.getUsername());
-			
+			Person person = personService.getPerson(authenticationRequest.getUsername());
 			final String token = jwtTokenUtil.generateToken(userDetails);
-
-			return ResponseEntity.ok(new JwtResponse(token));
+			
+			return new ResponseEntity<JwtResponse>(new JwtResponse(token, person.getId()), HttpStatus.OK);
 		}
 		throw new Exception("INVALID_CREDENTIALS");
 	}
@@ -58,19 +63,25 @@ public class JwtAuthenticationController {
 		person.setPassword(Hex.toHexString(digest));
 		int statusCode = userDetailsService.addPerson(person);
 		HashMap<String, Object> response = new HashMap();
+		HashMap<String, Object> error = new HashMap();
 		String message = "";
 		if(statusCode == 200) {
 			message = "Signup Successful.";
+			response.put("message", message);
+			ResponseEntity<HashMap>xyz = new ResponseEntity<HashMap>(response, HttpStatus.OK);
+			System.out.println(xyz);
+			return new ResponseEntity<HashMap>(response, HttpStatus.OK);
 		}
 		else if(statusCode == 409) {
 			message = "User already signed up. Please try Logging In";
+			error.put("message", message);
+			return new ResponseEntity<HashMap>(error, HttpStatus.CONFLICT);
 		}
 		else {
 			message = "There was an error on the server and the request could not be completed.";
+			error.put("message",message);
+			return new ResponseEntity<HashMap>(error, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		response.put("statusCode", statusCode);
-		response.put("message",message);
-		return ResponseEntity.ok(response);
 	}
 	
 	private HashMap authenticate(String username, String password) throws Exception {

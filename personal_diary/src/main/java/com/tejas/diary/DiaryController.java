@@ -63,28 +63,34 @@ public class DiaryController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Diary diary = new Diary(id,text,content.getDate());
+		Diary diary = new Diary(id,content.getTitle(), text,content.getDate());
 		diaryService.addContent(diary);
 		return 200;
 	}
 	
 	@GetMapping("/allPosts")
-	public String getAllPosts() {
+	public List<Diary> getAllPosts() {
 		List<Diary> list = diaryService.getAllPosts();
-		String content = "";
+		List<Diary> returnList = new ArrayList();		
 		for(Diary d : list) {
-			content += d.getId() + " : " + d.getDiaryContent() + "\n";
+			try {
+				System.out.println(d);
+				d.setText(new String(decryptCipher.doFinal(Base64.getDecoder().decode(d.getText().getBytes()))));
+				returnList.add(d);
+			}
+			catch(BadPaddingException | IllegalBlockSizeException e) {
+				e.printStackTrace();
+			}
 		}
-		return content;
+		return returnList;
 	}
 	
 	@GetMapping("/posts/{id}")
-	public List<Content> getAllPostsOfUser(@PathVariable int id) {
-		List<Diary> list = diaryService.getAllPosts();
-		ArrayList<Content> contentList = new ArrayList<Content>();
+	public List<Diary> getAllPostsOfUser(@PathVariable int id) {
+		List<Diary> list = diaryService.getAllPostsForUserById(id) ;
 		for(Diary d : list) {
 			if(d.getId() == id) {
-				String encrypted = d.getDiaryContent().getText();
+				String encrypted = d.getText();
 				String decrypted="";
 				try {
 					decrypted = new String(decryptCipher.doFinal(Base64.getDecoder().decode(encrypted.getBytes())));
@@ -92,13 +98,10 @@ public class DiaryController {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				System.out.println("Decrypted : "+decrypted);
-				Content c = d.getDiaryContent();
-				c.setText(decrypted);
-				contentList.add(c);
+				d.setText(decrypted);
 			}
 		}
-		return contentList;
+		return list;
 	}
 	
 }

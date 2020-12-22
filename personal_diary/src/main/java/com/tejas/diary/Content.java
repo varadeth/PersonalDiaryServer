@@ -5,19 +5,23 @@ import java.util.Date;
 
 public class Content {
 
-	
+	private String title;
 	private String text;
 	private String date;
 	public Content() {
 		super();
 	}
-	public Content(String text) {
-		super();
-		this.text = text;
+	public String getTitle() {
+		return title;
 	}
-	public Content(String text, String date) {
+	public void setTitle(String title) {
+		this.title = title;
+	}
+	public Content(String title, String text, String date) {
+		System.out.println("text : " + text);
 		this.text = text;
 		this.date = date;
+		this.title = title;
 	}
 	public String getText() {
 		return text;
@@ -27,7 +31,7 @@ public class Content {
 	}
 	@Override
 	public String toString() {
-		return "Content [content=" + text + ", date=" + date + "]";
+		return "Content [title=" + title + ", content=" + text + ", date=" + date + "]";
 	}
 	
 	public String getDate() {
