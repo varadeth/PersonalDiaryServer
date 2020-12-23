@@ -31,5 +31,9 @@ public class DiaryService {
 	public List<Diary> getAllPostsForUserById(int id) {
 		return diaryRepository.findAllDiaryById(id);
 	}
+	
+	public Diary getPostById(int id, int did) {
+		return diaryRepository.findByIdAndDid(id, did);
+	}
 
 }

@@ -15,6 +15,8 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.util.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -102,6 +104,24 @@ public class DiaryController {
 			}
 		}
 		return list;
+	}
+	
+	@GetMapping("post/{id}/{did}")
+	public ResponseEntity<Diary> getPost(@PathVariable int id, @PathVariable int did) {
+		Diary d = diaryService.getPostById(id, did);
+		if(d != null) {
+			try {
+				d.setText(new String(decryptCipher.doFinal(Base64.getDecoder().decode(d.getText().getBytes()))));
+			} catch (IllegalBlockSizeException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (BadPaddingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return new ResponseEntity<Diary>(d, HttpStatus.ACCEPTED);
+		}
+		return new ResponseEntity(null, HttpStatus.BAD_REQUEST);
 	}
 	
 }
