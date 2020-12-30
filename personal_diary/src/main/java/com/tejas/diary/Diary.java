@@ -1,6 +1,7 @@
 package com.tejas.diary;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -30,6 +31,7 @@ public class Diary {
 
 	private int id;
 	private String title;
+	@Column(length = 100000000)
 	private String text;
 	private String date;
 

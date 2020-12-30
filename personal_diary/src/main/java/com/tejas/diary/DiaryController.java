@@ -15,19 +15,30 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.util.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.tejas.authentication.config.JwtTokenUtil;
+import com.tejas.person.PersonService;
 
 @RestController
 public class DiaryController {
 
 	@Autowired
 	private DiaryService diaryService;
+	@Autowired
+	private JwtTokenUtil jwtTokenUtil;
+	@Autowired
+	private PersonService personService;
 	Cipher encryptCipher;
 	Cipher decryptCipher;
 	private static byte[] key = {
@@ -53,9 +64,11 @@ public class DiaryController {
 			e.printStackTrace();
 		}
 	}
-	@PostMapping("/addContent/{id}")
-	public int addContent(@PathVariable int id,@RequestBody Content content) {
+	@PostMapping("/addContent")
+	public int addContent(@RequestBody Content content, @RequestHeader(name="Authorization") String bearer) {
 		System.out.println(content);
+		Integer id = getIdFromUsername(getUsername(bearer.substring(7)));
+		
 		SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
 		content.setDate(formatter.format(new Date()));
 		String text = content.getText();
@@ -87,8 +100,9 @@ public class DiaryController {
 		return returnList;
 	}
 	
-	@GetMapping("/posts/{id}")
-	public List<Diary> getAllPostsOfUser(@PathVariable int id) {
+	@GetMapping("/posts")
+	public List<Diary> getAllPostsOfUser(@RequestHeader(name="Authorization") String header) {
+		Integer id = getIdFromUsername(getUsername(header.substring(7)));
 		List<Diary> list = diaryService.getAllPostsForUserById(id) ;
 		for(Diary d : list) {
 			if(d.getId() == id) {
@@ -106,8 +120,9 @@ public class DiaryController {
 		return list;
 	}
 	
-	@GetMapping("post/{id}/{did}")
-	public ResponseEntity<Diary> getPost(@PathVariable int id, @PathVariable int did) {
+	@GetMapping("post/{did}")
+	public ResponseEntity<Diary> getPost(@PathVariable int did, @RequestHeader(name = "Authorization") String authHeader) {
+		Integer id = getIdFromUsername(getUsername(authHeader.substring(7)));
 		Diary d = diaryService.getPostById(id, did);
 		if(d != null) {
 			try {
@@ -124,4 +139,26 @@ public class DiaryController {
 		return new ResponseEntity(null, HttpStatus.BAD_REQUEST);
 	}
 	
+	@PutMapping("update/{did}")
+	public ResponseEntity<Integer> updatePost(@PathVariable int did, @RequestBody Diary content, @RequestHeader(name="Authorization") String authHeader) {
+		String text = content.getText();
+		Integer id = getIdFromUsername(getUsername(authHeader.substring(7)));
+		try {
+			text = Base64.getEncoder().encodeToString(encryptCipher.doFinal(text.getBytes()));
+		} catch (IllegalBlockSizeException | BadPaddingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		content.setText(text);
+		diaryService.updateContent(content);
+		return new ResponseEntity<Integer>(200, HttpStatus.ACCEPTED);
+	}
+	
+	public String getUsername(String authToken) {
+		return jwtTokenUtil.getUsernameFromToken(authToken);
+	}
+	
+	public Integer getIdFromUsername(String username) {
+		return personService.getPerson(username).getId();
+	}
 }

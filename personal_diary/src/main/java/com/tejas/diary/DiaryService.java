@@ -35,5 +35,10 @@ public class DiaryService {
 	public Diary getPostById(int id, int did) {
 		return diaryRepository.findByIdAndDid(id, did);
 	}
+	
+	public int updateContent(Diary content) {
+		diaryRepository.save(content);
+		return 200;
+	}
 
 }
